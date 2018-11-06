@@ -35,3 +35,5 @@ app.use(express.static('public'))
       </body>
 </html>
 ```
+#### webpack --config webpack.config.js --watch
+当前打包文件变化时就会重新打包

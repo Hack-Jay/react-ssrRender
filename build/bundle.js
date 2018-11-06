@@ -86,6 +86,94 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/Routes.js":
+/*!***********************!*\
+  !*** ./src/Routes.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(/*! react-router-dom */ "react-router-dom");
+
+var _Home = __webpack_require__(/*! ./containers/Home */ "./src/containers/Home/index.js");
+
+var _Home2 = _interopRequireDefault(_Home);
+
+var _Login = __webpack_require__(/*! ./containers/Login */ "./src/containers/Login/index.js");
+
+var _Login2 = _interopRequireDefault(_Login);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(_reactRouterDom.Route, { path: '/', exact: true, component: _Home2.default }),
+    _react2.default.createElement(_reactRouterDom.Route, { path: '/login', exact: true, component: _Login2.default })
+);
+
+/***/ }),
+
+/***/ "./src/components/Header.js":
+/*!**********************************!*\
+  !*** ./src/components/Header.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(/*! react-router-dom */ "react-router-dom");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Header = function Header() {
+    return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+            'h3',
+            null,
+            'Header'
+        ),
+        _react2.default.createElement(
+            _reactRouterDom.Link,
+            { to: '/' },
+            'Home'
+        ),
+        _react2.default.createElement('br', null),
+        _react2.default.createElement(
+            _reactRouterDom.Link,
+            { to: '/login' },
+            'Login'
+        )
+    );
+};
+
+exports.default = Header;
+
+/***/ }),
+
 /***/ "./src/containers/Home/index.js":
 /*!**************************************!*\
   !*** ./src/containers/Home/index.js ***!
@@ -104,29 +192,83 @@ var _react = __webpack_require__(/*! react */ "react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Header = __webpack_require__(/*! ../../components/Header */ "./src/components/Header.js");
+
+var _Header2 = _interopRequireDefault(_Header);
+
+var _reactRedux = __webpack_require__(/*! react-redux */ "react-redux");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Home = function Home() {
+var Home = function Home(props) {
     return _react2.default.createElement(
         'div',
         null,
+        _react2.default.createElement(_Header2.default, null),
         _react2.default.createElement(
             'span',
             null,
-            'This is home component'
+            'This is home component. name: ',
+            props.name
         ),
         _react2.default.createElement('br', null),
         _react2.default.createElement(
             'button',
             { onClick: function onClick() {
-                    return alert('home...');
+                    return alert('home');
                 } },
             ' button'
         )
     );
 };
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        name: state.name
+    };
+};
+exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(Home);
 
-exports.default = Home;
+/***/ }),
+
+/***/ "./src/containers/Login/index.js":
+/*!***************************************!*\
+  !*** ./src/containers/Login/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Header = __webpack_require__(/*! ../../components/Header */ "./src/components/Header.js");
+
+var _Header2 = _interopRequireDefault(_Header);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Login = function Login() {
+    return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(_Header2.default, null),
+        _react2.default.createElement(
+            'span',
+            null,
+            'This is Login Pages .'
+        ),
+        _react2.default.createElement('br', null)
+    );
+};
+
+exports.default = Login;
 
 /***/ }),
 
@@ -144,29 +286,79 @@ var _express = __webpack_require__(/*! express */ "express");
 
 var _express2 = _interopRequireDefault(_express);
 
-var _react = __webpack_require__(/*! react */ "react");
-
-var _react2 = _interopRequireDefault(_react);
-
-var _Home = __webpack_require__(/*! ../containers/Home */ "./src/containers/Home/index.js");
-
-var _Home2 = _interopRequireDefault(_Home);
-
-var _server = __webpack_require__(/*! react-dom/server */ "react-dom/server");
+var _utils = __webpack_require__(/*! ./utils */ "./src/server/utils.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = (0, _express2.default)();
-var content = (0, _server.renderToString)(_react2.default.createElement(_Home2.default, null));
 app.use(_express2.default.static('public'));
 
-app.get('/', function (req, res) {
-  res.send('<html>\n      <head>\n        <title>ssr</title>\n      </head>\n      <body>\n        <div id="root">' + content + '</div>\n        <script src="/index.js"></script>\n      </body>\n    </html>');
+app.get('*', function (req, res) {
+  res.send((0, _utils.render)(req));
 });
 
 app.listen(3000, function () {
   return console.log('server is running at port 3000');
 });
+
+/***/ }),
+
+/***/ "./src/server/utils.js":
+/*!*****************************!*\
+  !*** ./src/server/utils.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.render = undefined;
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(/*! react-router-dom */ "react-router-dom");
+
+var _server = __webpack_require__(/*! react-dom/server */ "react-dom/server");
+
+var _reactRedux = __webpack_require__(/*! react-redux */ "react-redux");
+
+var _redux = __webpack_require__(/*! redux */ "redux");
+
+var _reduxThunk = __webpack_require__(/*! redux-thunk */ "redux-thunk");
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+var _Routes = __webpack_require__(/*! ../Routes */ "./src/Routes.js");
+
+var _Routes2 = _interopRequireDefault(_Routes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var render = exports.render = function render(req) {
+	var reducer = function reducer() {
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { name: 'hj' };
+		var action = arguments[1];
+
+		return state;
+	};
+	var store = (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+	var content = (0, _server.renderToString)(_react2.default.createElement(
+		_reactRedux.Provider,
+		{ store: store },
+		_react2.default.createElement(
+			_reactRouterDom.StaticRouter,
+			{ location: req.path, context: {} },
+			_Routes2.default
+		)
+	));
+	return '\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>ssr</title>\n\t\t\t</head>\n\t\t\t<body>\n\t\t\t\t<div id="root">' + content + '</div>\n\t\t\t\t<script src="/index.js"></script>\n\t\t\t</body>\n\t\t</html>\n    ';
+};
 
 /***/ }),
 
@@ -200,6 +392,50 @@ module.exports = require("react");
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom/server");
+
+/***/ }),
+
+/***/ "react-redux":
+/*!******************************!*\
+  !*** external "react-redux" ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("react-redux");
+
+/***/ }),
+
+/***/ "react-router-dom":
+/*!***********************************!*\
+  !*** external "react-router-dom" ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("react-router-dom");
+
+/***/ }),
+
+/***/ "redux":
+/*!************************!*\
+  !*** external "redux" ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("redux");
+
+/***/ }),
+
+/***/ "redux-thunk":
+/*!******************************!*\
+  !*** external "redux-thunk" ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("redux-thunk");
 
 /***/ })
 
