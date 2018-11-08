@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { CHANGE_LIST } from './contants'
 
 const changeList = (list) => ({
@@ -6,10 +5,10 @@ const changeList = (list) => ({
 	list
 })
 
-export const getHomeList = () => dispatch => {
-	return axios.get('http://47.95.113.63/ssr/api/new.json?secret=abcd')
+// http://47.95.113.63/ssr/api/new.json?secret=abcd
+export const getHomeList = () => (dispatch, getState, axiosInstance) => {
+	return axiosInstance.get('/api/new.json?secret=abcd')
 	.then(res => {
-		console.log(res.data)
 		dispatch(changeList(res.data))
 	})
 }

@@ -5,25 +5,27 @@ import { getHomeList } from './store'
 
 class Home extends Component {
     componentDidMount () {
-        this.props.getHomeList()
+        if(!this.props.list.length) {
+            this.props.getHomeList()
+        }
     }
     render() {
         return (
             <div>
-                <Header /> 
                 <span>
                     This is home component.
                     name: {this.props.name}
                 </span><br />
-								{
-									this.props.list
-								}
+                {
+                    this.props.list
+                }
                 <button onClick={()=>alert('home')}> button</button>
             </div>
         )
     }
 }
 
+// 服务端加载数据
 Home.loadData = (store)=> {
     return store.dispatch(getHomeList())
 }

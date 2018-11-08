@@ -3,7 +3,6 @@ import Header from '../../components/Header'
 
 const Login = ()=> (
     <div> 
-        <Header />
         <span>
             This is Login Pages .
         </span><br />

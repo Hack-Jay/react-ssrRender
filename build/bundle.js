@@ -86,6 +86,45 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/App.js":
+/*!********************!*\
+  !*** ./src/App.js ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterConfig = __webpack_require__(/*! react-router-config */ "react-router-config");
+
+var _Header = __webpack_require__(/*! ./components/Header */ "./src/components/Header.js");
+
+var _Header2 = _interopRequireDefault(_Header);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var App = function App(props) {
+    return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(_Header2.default, null),
+        (0, _reactRouterConfig.renderRoutes)(props.route.routes)
+    );
+};
+
+exports.default = App;
+
+/***/ }),
+
 /***/ "./src/Routes.js":
 /*!***********************!*\
   !*** ./src/Routes.js ***!
@@ -104,8 +143,6 @@ var _react = __webpack_require__(/*! react */ "react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterDom = __webpack_require__(/*! react-router-dom */ "react-router-dom");
-
 var _Home = __webpack_require__(/*! ./containers/Home */ "./src/containers/Home/index.js");
 
 var _Home2 = _interopRequireDefault(_Home);
@@ -114,20 +151,56 @@ var _Login = __webpack_require__(/*! ./containers/Login */ "./src/containers/Log
 
 var _Login2 = _interopRequireDefault(_Login);
 
+var _App = __webpack_require__(/*! ./App */ "./src/App.js");
+
+var _App2 = _interopRequireDefault(_App);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
-    path: "/",
-    component: _Home2.default,
-    exact: true,
-    loadData: _Home2.default.loadData,
-    key: "home"
-}, {
-    path: "/login",
-    component: _Login2.default,
-    exact: true,
-    key: "login"
+    path: '/',
+    component: _App2.default,
+    routes: [{
+        path: "/",
+        component: _Home2.default,
+        exact: true,
+        loadData: _Home2.default.loadData,
+        key: "home"
+    }, {
+        path: "/login",
+        component: _Login2.default,
+        exact: true,
+        key: "login"
+    }]
 }];
+
+/***/ }),
+
+/***/ "./src/client/request.js":
+/*!*******************************!*\
+  !*** ./src/client/request.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _axios = __webpack_require__(/*! axios */ "axios");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var instance = _axios2.default.create({
+    baseURL: '/'
+});
+
+exports.default = instance;
 
 /***/ }),
 
@@ -228,7 +301,9 @@ var Home = function (_Component) {
     _createClass(Home, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.props.getHomeList();
+            if (!this.props.list.length) {
+                this.props.getHomeList();
+            }
         }
     }, {
         key: 'render',
@@ -236,7 +311,6 @@ var Home = function (_Component) {
             return _react2.default.createElement(
                 'div',
                 null,
-                _react2.default.createElement(_Header2.default, null),
                 _react2.default.createElement(
                     'span',
                     null,
@@ -258,6 +332,9 @@ var Home = function (_Component) {
 
     return Home;
 }(_react.Component);
+
+// 服务端加载数据
+
 
 Home.loadData = function (store) {
     return store.dispatch((0, _store.getHomeList)());
@@ -297,13 +374,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getHomeList = undefined;
 
-var _axios = __webpack_require__(/*! axios */ "axios");
-
-var _axios2 = _interopRequireDefault(_axios);
-
 var _contants = __webpack_require__(/*! ./contants */ "./src/containers/Home/store/contants.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var changeList = function changeList(list) {
 	return {
@@ -312,10 +383,10 @@ var changeList = function changeList(list) {
 	};
 };
 
+// http://47.95.113.63/ssr/api/new.json?secret=abcd
 var getHomeList = exports.getHomeList = function getHomeList() {
-	return function (dispatch) {
-		return _axios2.default.get('http://47.95.113.63/ssr/api/new.json?secret=abcd').then(function (res) {
-			console.log(res.data);
+	return function (dispatch, getState, axiosInstance) {
+		return axiosInstance.get('/api/new.json?secret=abcd').then(function (res) {
 			dispatch(changeList(res.data));
 		});
 	};
@@ -435,7 +506,6 @@ var Login = function Login() {
     return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_Header2.default, null),
         _react2.default.createElement(
             'span',
             null,
@@ -463,11 +533,13 @@ var _express = __webpack_require__(/*! express */ "express");
 
 var _express2 = _interopRequireDefault(_express);
 
+var _expressHttpProxy = __webpack_require__(/*! express-http-proxy */ "express-http-proxy");
+
+var _expressHttpProxy2 = _interopRequireDefault(_expressHttpProxy);
+
 var _reactRouterConfig = __webpack_require__(/*! react-router-config */ "react-router-config");
 
 var _store = __webpack_require__(/*! ../store */ "./src/store/index.js");
-
-var _store2 = _interopRequireDefault(_store);
 
 var _Routes = __webpack_require__(/*! ../Routes */ "./src/Routes.js");
 
@@ -480,9 +552,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var app = (0, _express2.default)();
 app.use(_express2.default.static('public'));
 
+app.use('api', (0, _expressHttpProxy2.default)('http://47.95.113.63', {
+	proxyReqPathResolver: function proxyReqPathResolver(req) {
+		return '/ssr/api' + req.url;
+	}
+}));
 app.get('*', function (req, res) {
-	var store = (0, _store2.default)();
+	var store = (0, _store.getStore)();
 	// 根据路由填充store
+
 	var matchedRoutes = (0, _reactRouterConfig.matchRoutes)(_Routes2.default, req.path);
 
 	var promises = [];
@@ -499,6 +577,34 @@ app.get('*', function (req, res) {
 app.listen(3000, function () {
 	return console.log('server is running at port 3000');
 });
+
+/***/ }),
+
+/***/ "./src/server/request.js":
+/*!*******************************!*\
+  !*** ./src/server/request.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _axios = __webpack_require__(/*! axios */ "axios");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var instance = _axios2.default.create({
+    baseURL: 'http://47.95.113.63/ssr'
+});
+
+exports.default = instance;
 
 /***/ }),
 
@@ -525,6 +631,8 @@ var _reactRouterDom = __webpack_require__(/*! react-router-dom */ "react-router-
 
 var _server = __webpack_require__(/*! react-dom/server */ "react-dom/server");
 
+var _reactRouterConfig = __webpack_require__(/*! react-router-config */ "react-router-config");
+
 var _reactRedux = __webpack_require__(/*! react-redux */ "react-redux");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -539,13 +647,11 @@ var render = exports.render = function render(store, routes, req) {
 			_react2.default.createElement(
 				'div',
 				null,
-				routes.map(function (route) {
-					return _react2.default.createElement(_reactRouterDom.Route, route);
-				})
+				(0, _reactRouterConfig.renderRoutes)(routes)
 			)
 		)
 	));
-	return '\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>ssr</title>\n\t\t\t</head>\n\t\t\t<body>\n\t\t\t\t<div id="root">' + content + '</div>\n\t\t\t\t<script src="/index.js"></script>\n\t\t\t</body>\n\t\t</html>\n\t\t';
+	return '\n\t<html>\n\t\t<head>\n\t\t\t<title>ssr</title>\n\t\t</head>\n\t\t<body>\n\t\t\t<div id="root">' + content + '</div>\n\t\t\t<script>\n\t\t\t\twindow.context = {\n\t\t\t\t\tstate: ' + JSON.stringify(store.getState()) + '\n\t\t\t\t}\n\t\t\t</script>\n\t\t\t<script src="/index.js"></script>\n\t\t</body>\n\t</html>\n\t';
 };
 
 /***/ }),
@@ -563,6 +669,7 @@ var render = exports.render = function render(store, routes, req) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.getStore = exports.getClientStore = undefined;
 
 var _redux = __webpack_require__(/*! redux */ "redux");
 
@@ -572,16 +679,28 @@ var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
 var _store = __webpack_require__(/*! ../containers/Home/store */ "./src/containers/Home/store/index.js");
 
+var _request = __webpack_require__(/*! ../client/request */ "./src/client/request.js");
+
+var _request2 = _interopRequireDefault(_request);
+
+var _request3 = __webpack_require__(/*! ../server/request */ "./src/server/request.js");
+
+var _request4 = _interopRequireDefault(_request3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var reducer = (0, _redux.combineReducers)({
     home: _store.reducer
 });
-var getStore = function getStore() {
-    return (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(_reduxThunk2.default));
-};
 
-exports.default = getStore;
+// 数据脱水
+var getClientStore = exports.getClientStore = function getClientStore() {
+    var defaultState = window.context.state;
+    return (0, _redux.createStore)(reducer, defaultState, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(_request2.default)));
+};
+var getStore = exports.getStore = function getStore() {
+    return (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(_request4.default)));
+};
 
 /***/ }),
 
@@ -604,6 +723,17 @@ module.exports = require("axios");
 /***/ (function(module, exports) {
 
 module.exports = require("express");
+
+/***/ }),
+
+/***/ "express-http-proxy":
+/*!*************************************!*\
+  !*** external "express-http-proxy" ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("express-http-proxy");
 
 /***/ }),
 
